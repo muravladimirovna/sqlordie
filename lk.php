@@ -28,7 +28,6 @@ printhead(); ?>
 							<!-- <label for="btn1" class="btn btn-default" style="float:left;">Выберите файл</label> -->
 							<input class="btn btn-warning ajax_img" value="Загрузить" name="download" id="btn2" data-action="download">
 						</form>
-						
 					</div> 
 
 					<div class="col-3 panellk d-flex justify-content-between p-0">
