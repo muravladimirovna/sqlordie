@@ -1,3 +1,22 @@
+function fillTable(wrap, data){
+	if(wrap != "" && wrap.length > 0 && data != ""){
+    	wrap.show().find("table tbody").html("");
+    	wrap.show().find("table thead").html("");
+    	$.each(data,function(i,row){
+    		if(i == 0){
+    			var container = wrap.find("table thead");
+    		}else{
+    			var container = wrap.find("table tbody");
+    		}
+    		container.append("<tr>");
+    		$.each(row,function(j,cell){
+    			container.find("tr:last-child").append("<td>");
+    			container.find("tr:last-child td").last().text(cell);
+    		});
+       	});
+    }
+}
+
 $(document).ready(function(){
 
 	$("body").on("click",".ajax_btn",function(event){
@@ -80,25 +99,6 @@ $(document).ready(function(){
 		$("#alert_result").hide();
 		$("[name='userquery'], [name='viewtable']").removeAttr("disabled");
 	});
-
-	function fillTable(wrap,data){
-		if(wrap != "" && wrap.length > 0 && data != ""){
-	    	wrap.show().find("table tbody").html("");
-	    	wrap.show().find("table thead").html("");
-	    	$.each(data,function(i,row){
-	    		if(i == 0){
-	    			var container = wrap.find("table thead");
-	    		}else{
-	    			var container = wrap.find("table tbody");
-	    		}
-	    		container.append("<tr>");
-	    		$.each(row,function(j,cell){
-	    			container.find("tr:last-child").append("<td>");
-	    			container.find("tr:last-child td").last().text(cell);
-	    		});
-	       	});
-	    }
-	}
 
 	$("body").on("click", "[name='viewtable']", function(){
 		var query = $("#task_select option:selected").data('qer'),

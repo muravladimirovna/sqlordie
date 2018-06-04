@@ -9,46 +9,6 @@ class SqlEx {
 
 	}
 
-	function updateTable(){
-		$q = "SELECT id, login FROM users";
-		if ($stmt = $this->db->dbcon_rw->prepare($q)) {
-		    $stmt->execute();
-		    $stmt->bind_result($id, $login);
-		    while ($stmt->fetch()) {
-		    	if(!$text){
-		    		$asked = (bool)$asked ;
-		    	}
-		        $users[] = array('id'=>$id, 'login'=>$login);
-		    }
-		    $stmt->close();
-		}else{
-			return false;
-		}
-
-		foreach($users as &$user){
-			$query = "SELECT num as 'id', ". $user['login'] ." as 'answer' FROM answers";
-			if ($stmt = $this->db->dbcon_rw->prepare($query)) {
-			    $stmt->execute();
-			    $stmt->bind_result($id, $answer);
-			    while ($stmt->fetch()) {
-			        $user['answers'][$id] = (bool)$answer ? str_replace('\n', '', $answer) : false;
-			    }
-			    $stmt->close();
-			}else{
-				$user['answers'] = false;
-			}
-
-			$user['answers'] = serialize($user['answers']);
-
-			$res = $this->db->dbcon_rw->query("UPDATE users SET answers= '". $user['answers'] ."' WHERE id = ". $user['id']);
-			if($res) $user['success'] = true;
-				else $user['success'] = false;
-		}
-		$this->db->dbcon_rw->close();
-		return $users;
-	}
-
-
 	function getTasks($text = false, $login = "", $close = true){
 		$login = $login ? $login : $_SESSION['user']['login'];
 		$tasks = array();
@@ -60,7 +20,7 @@ class SqlEx {
 		    	if(!$text){
 		    		$asked = (bool)$asked ;
 		    	}
-		        $tasks[] = array('id'=>$id, 'task'=>$task, 'db'=>$db, 'qer'=>$qer, 'dbinfo'=>$dbinfo, 'asked'=>$asked);
+		        $tasks[] = ['id' => $id, 'task' => $task, 'db' => $db, 'qer' => $qer, 'dbinfo' => $dbinfo, 'asked' => $asked];
 		    }
 		    $stmt->close();
 		}else{
@@ -72,7 +32,6 @@ class SqlEx {
 		$_SESSION["tasks"] = $tasks;
 		return json_encode($tasks);
 	}
-
 
 	function getResultTable($query, $conn = ""){
 		$conn = $conn ? $conn : $this->db->dbcon_r;
@@ -108,20 +67,20 @@ class SqlEx {
 		$ttable = $this->getResultTable($query, $conn);
 		$utable = $this->getResultTable($uquery, $conn);
 		if(!$utable){
-			return array(
+			return [
 				'message' => '<div class="alert alert-danger">Некорректный запрос!</div>',
 				'user' => "",
 				'true' => json_decode($ttable)
-				);
+				];
 		};
 		$ttable = json_decode($ttable);
 		$utable = json_decode($utable);
 		if(!$utable){
-			return array(
+			return [
 				'message' => '<div class="alert alert-danger">Некорректный запрос!</div>',
 				'user' => "",
 				'true' => $ttable
-				);
+				];
 		};
 		// кол-во столбцов
 		$tcolumn = count($ttable[0]);
@@ -151,40 +110,42 @@ class SqlEx {
 				}
 			};
 			if($flag){
-				return array(
+				return [
 					'message' => '<div class="alert alert-success">Запрос верный!</div>',
 					'user' => $utable,
 					'true' => $ttable,
 					'check' => true
-					);
+					];
 			}else{
-				return array(
+				return [
 					'message' => '<div class="alert alert-warning">Запрос не точный!</div>',
 					'user' => $utable,
 					'true' => $ttable
-					);
+					];
 			};
 		}else{
-			return array(
+			return [
 				'message' => '<div class="alert alert-danger">Запрос не верный!</div>',
 				'user' => $utable,
 				'true' => $ttable
-				);
+				];
 		}
 	}
 
 	function checkTask($num, $query){
 		if($num){
 			$query = $query ? mb_strtolower(stripslashes($query)) : "";
-			$result = $this->db->dbcon_rw->query("update answers set ". $_SESSION['user']['login'] ." = '".$query."' where num = '". $num ."' ;");
+			//$result = $this->db->dbcon_rw->query("update answers set ". $_SESSION['user']['login'] ." = '".$query."' where num = '". $num ."' ;");
+			$result = $this->db->dbcon_rw->query("select answers from users where id = ". $_SESSION['user']['id'] ." ;");
+			$user_answers = $result ? $result->fetch_array(MYSQLI_ASSOC) : false;
+			$user_answers = unserialize($user_answers["answers"]);
+			$user_answers[$num] = $query;
+
+			$_SESSION['user']['score'] = $_SESSION['user']['score'] ? intval($_SESSION['user']['score']) + 1 : 1;
+
+			$result = $this->db->dbcon_rw->query("update users set answers = '" . serialize($user_answers) . "', score = '". $_SESSION['user']['score'] ."' where id = ". $_SESSION['user']['id'].";");
 			if($result){
-				$_SESSION['user']['score'] = $_SESSION['user']['score'] ? intval($_SESSION['user']['score']) + 1 : 1;
-				$result = $this->db->dbcon_rw->query("update users set score = '". $_SESSION['user']['score'] ."' where id = ". $_SESSION['user']['id'].";");
-				if($result){
-					return true;
-				}else{
-					return false;
-				}
+				return true;
 			}else{
 				return false;
 			}
@@ -193,7 +154,45 @@ class SqlEx {
 		}
 	}
 
+	# не запускать
+	function updateTable(){
+		$q = "SELECT id, login FROM users";
+		if ($stmt = $this->db->dbcon_rw->prepare($q)) {
+		    $stmt->execute();
+		    $stmt->bind_result($id, $login);
+		    while ($stmt->fetch()) {
+		    	if(!$text){
+		    		$asked = (bool)$asked ;
+		    	}
+		        $users[] = ['id'=>$id, 'login'=>$login];
+		    }
+		    $stmt->close();
+		}else{
+			return false;
+		}
 
+		foreach($users as &$user){
+			$query = "SELECT num as 'id', ". $user['login'] ." as 'answer' FROM answers";
+			if ($stmt = $this->db->dbcon_rw->prepare($query)) {
+			    $stmt->execute();
+			    $stmt->bind_result($id, $answer);
+			    while ($stmt->fetch()) {
+			        $user['answers'][$id] = (bool)$answer ? str_replace('\n', '', $answer) : false;
+			    }
+			    $stmt->close();
+			}else{
+				$user['answers'] = false;
+			}
+
+			$user['answers'] = serialize($user['answers']);
+
+			$res = $this->db->dbcon_rw->query("UPDATE users SET answers= '". $user['answers'] ."' WHERE id = ". $user['id']);
+			if($res) $user['success'] = true;
+				else $user['success'] = false;
+		}
+		$this->db->dbcon_rw->close();
+		return $users;
+	}
 
 
 }

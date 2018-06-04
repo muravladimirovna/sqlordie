@@ -1,3 +1,4 @@
+var allTasks;
 $(document).ready(function(){
 
 	// получение списка заданий
@@ -9,15 +10,15 @@ $(document).ready(function(){
         dataType: 'json',
         type: "GET",
         success: function(data){
-        	console.log(data);
-        	$.each(data,function(i,el){
-        		$("#task_select").append("<option class='"+ el.asked +"'>");
-        		$("#task_select option").last().text(i+1).val(el.id).data("id", el.id).data("db", el.db).data("dbinfo",el.dbinfo.replace(/\n/ig, ' ')).data("task", el.task.replace(/\n/ig, ' ')).data("qer", el.qer.replace(/\n/ig, ' '));
-        		if($("#task_select option").last().hasClass("true")){
-        			$("#task_select option").last().attr("disabled","disabled");
-        		};
-           	});
-           	$("#task_select option").first().attr("selected","selected");
+			if(data != ""){
+				allTasks = data;
+		    	wrap = $("#all_tasks_table");
+		    	$.each(data, function(i, row){
+		    		var tr_item = $("<div>").addClass('tr_item').data("id", row.id);
+		    		tr_item.append($("<div>").addClass("td_item p-2").text(row.id)).append($("<div>").addClass("td_item p-2").text(row.task));
+	    			wrap.append(tr_item);
+		       	});
+		    }
         },
         error: function(){
             console.log("Ошибка отправки запроса");

@@ -404,6 +404,26 @@ option.true {
 	width: 100%;
 	color: #3c3c3c;
 }
+.all_tasks_table .tr_item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	border-bottom: 1px solid #eee;
+	cursor: pointer;
+}
+.all_tasks_table {
+	max-height: 50vh;
+	min-height: 300px;
+	overflow-y: auto;
+}
+.all_tasks_table .tr_item .td_item:first-child {
+	min-width: 35px;
+}
+.all_tasks_table .tr_item .td_item:nth-child(2) {
+	flex-grow: 1;
+}
+
+
 @media (max-width: 992px){
 	 div#navbarSupportedContent {
 	    position: absolute;

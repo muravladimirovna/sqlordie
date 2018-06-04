@@ -63,7 +63,7 @@ printhead(); ?>
 						<!--создание формы ввода запроса -->
 						<form class="textarea">
 							<input type="hidden" name="query" value=\'\'>
-							<textarea  name="uquery" class="well well-lg sql p-3" id="sqltext" oncopy="return false;" onpaste="return false;"></textarea>
+							<textarea  name="uquery" class="well well-lg sql p-3" id="sqltext" oncopy="return false;"></textarea>
 							<input type="button" class="btn btn-default navbar-btn runquery" id="btntext1" data-result="#results_wrapper" name="userquery" value="Выполнить" disabled>
 						</form>
 						
@@ -80,8 +80,7 @@ printhead(); ?>
 
 		<div class="results">
 			<div class="container p-4">	
-			<div class="title">Результаты выполнения</div><!-- 
-				<div class="alert" style="text-align:center;"> -->
+			<div class="title">Результаты выполнения</div>
 				<div id="alert_result" class="alert" style="display: none; text-align: center;"></div>
 				<div class="results_wrapper">
 					<div id="results_wrapper" style="display: none;">						
@@ -105,14 +104,9 @@ printhead(); ?>
 				</div>
 			</div>	<!--container-->
 		</main>
-		<?printfooter();?> 
+		<? printfooter();?> 
 	<script src="js/sqlex.js"></script>
-	<script>
-		
-	
-
-		
-
+	<!-- <script>
 		function results(){
 			console.log($('.well.well-lg.sql').val());
 			$.ajax({
@@ -152,7 +146,7 @@ printhead(); ?>
 	        });
 	        truetable();
 		}
-	</script>
+	</script> -->
 
 </body>
 
