@@ -77,7 +77,6 @@ printhead(); ?>
 			</div>
 		</div>
 
-
 		<div class="results">
 			<div class="container p-4">	
 			<div class="title">Результаты выполнения</div>

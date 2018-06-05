@@ -14,8 +14,8 @@ printhead(); ?>
 					<span class="input-group-addon col-12 col-sm-4">Пароль:</span>
 					<input class="form-control password col-12 col-sm-8" name="password" type="password">
 				</div>	
-				<input type="submit" name="l_send" class="ajax_btn btn btn-default navbar-btn" id="inputsend" value="Войти" data-action="login">				
-			<a href="registration.php">Зарегистрироваться</a>
+				<input type="submit" name="l_send" class="_ajax_btn btn btn-default navbar-btn" id="inputsend" value="Войти" data-action="login">				
+				<a href="registration.php">Зарегистрироваться</a>
 			</form>	
 		</div>
 	</main>

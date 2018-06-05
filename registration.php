@@ -27,7 +27,7 @@ printhead(); ?>
 					<select name="groups" id="groupslist" class="selectpicker1"></select>
 				</div>	
 				<div class="input-group p-1 d-flex justify-content-end">	
-					<input name="send" type="submit" class="btn btn-default navbar-btn ajax_btn" id="inputlog" value="Зарегистрироваться" data-action="regUser"><br>
+					<input name="send" type="submit" class="btn btn-default navbar-btn _ajax_btn" id="inputlog" value="Зарегистрироваться" data-action="regUser"><br>
 				</div>
 				
 			</form>	

@@ -6,19 +6,26 @@ class SqlEx {
       	require_once("class.connection.php");
       	
       	$this->db = new Connection();
+		$this->user = new User();
+		# накатить дамп с ответами
+		# и только потом запустить
+		# $this->updateTable();
 
 	}
 
-	function getTasks($text = false, $login = "", $close = true){
-		$login = $login ? $login : $_SESSION['user']['login'];
+	function getTasks($text = false, $user_id = "", $close = true){
+		$user_id = $user_id ? $user_id : $_SESSION['user']['id'];
 		$tasks = array();
-		$query = "SELECT tasks.id, tasks.task, tasks.db, qer.qer, db.info as 'dbinfo', answers.". $login ." as 'asked' FROM ((tasks INNER JOIN qer ON tasks.id = qer.id) INNER JOIN db ON db.id = tasks.db) INNER JOIN answers ON answers.num = tasks.id";
+		$query = "SELECT `tasks`.id, `tasks`.task, `tasks`.db, `qer`.qer, `db`.info as 'dbinfo' FROM ((tasks INNER JOIN qer ON `tasks`.id = `qer`.id) INNER JOIN db ON `db`.id = `tasks`.db);";
+		$answers =  $this->user->getUserAnswers();
+
 		if ($stmt = $this->db->dbcon_rw->prepare($query)) {
 		    $stmt->execute();
-		    $stmt->bind_result($id, $task, $db, $qer, $dbinfo, $asked);
+		    $stmt->bind_result($id, $task, $db, $qer, $dbinfo);
 		    while ($stmt->fetch()) {
-		    	if(!$text){
-		    		$asked = (bool)$asked ;
+    			$asked = $answers[$id];
+		    	if(!$text){ // текст запроса
+		    		$asked = (bool)$asked;
 		    	}
 		        $tasks[] = ['id' => $id, 'task' => $task, 'db' => $db, 'qer' => $qer, 'dbinfo' => $dbinfo, 'asked' => $asked];
 		    }
@@ -33,7 +40,8 @@ class SqlEx {
 		return json_encode($tasks);
 	}
 
-	function getResultTable($query, $conn = ""){
+
+	function getResultTable($query, $conn = "") {
 		$conn = $conn ? $conn : $this->db->dbcon_r;
 		if(isset($query) and !empty($query)){
 			$query = mb_strtolower(stripslashes($query));
@@ -138,7 +146,7 @@ class SqlEx {
 			//$result = $this->db->dbcon_rw->query("update answers set ". $_SESSION['user']['login'] ." = '".$query."' where num = '". $num ."' ;");
 			$result = $this->db->dbcon_rw->query("select answers from users where id = ". $_SESSION['user']['id'] ." ;");
 			$user_answers = $result ? $result->fetch_array(MYSQLI_ASSOC) : false;
-			$user_answers = unserialize($user_answers["answers"]);
+			$user_answers = $user_answers ? unserialize($user_answers["answers"]) : false;
 			$user_answers[$num] = $query;
 
 			$_SESSION['user']['score'] = $_SESSION['user']['score'] ? intval($_SESSION['user']['score']) + 1 : 1;
@@ -185,7 +193,6 @@ class SqlEx {
 			}
 
 			$user['answers'] = serialize($user['answers']);
-
 			$res = $this->db->dbcon_rw->query("UPDATE users SET answers= '". $user['answers'] ."' WHERE id = ". $user['id']);
 			if($res) $user['success'] = true;
 				else $user['success'] = false;

@@ -17,14 +17,42 @@ function fillTable(wrap, data){
     }
 }
 
+function getTasksList() {
+	// получение списка заданий
+	$.ajax({
+        url: "ajax/api.php",
+        data: {
+        	action: "getTasks"
+        },
+        dataType: 'json',
+        type: "GET",
+        success: function(data){
+			if(data != ""){
+				allTasks = data;
+		    	wrap = $("#all_tasks_table").html("");
+		    	$.each(data, function(i, row){
+		    		var tr_item = $("<a>").addClass('tr_item _manager_select_task').attr("href", "#").data({"id": row.id, "info": JSON.stringify(row)});
+		    		tr_item.append($("<div>").addClass("td_item p-2").text(i+1)).append($("<div>").addClass("td_item p-2").text(row.task));
+	    			wrap.append(tr_item);
+		       	});
+		    }
+        },
+        error: function(){
+            console.log("Ошибка отправки запроса");
+        },
+    });
+}
+
 $(document).ready(function(){
 
-	$("body").on("click",".ajax_btn",function(event){
-		event.preventDefault();
+	$("body").on("click","._ajax_btn",function(e){
+		e.preventDefault();
 
 		var _this = this,
 		data = $(this).closest("form").serialize(),
 		action = $(this).data("action");
+
+		$("#ajaxresp").html("");
 
 		$.ajax({
             url: "ajax/api.php",
@@ -36,11 +64,17 @@ $(document).ready(function(){
             cache: false,
             type: "POST",
             success: function(data){
-
             	if(data){
             		$("#ajaxresp").html(data);
             		if(action == "login" || action=="regUser"){
             			document.location.href="lk.php";
+            		}else if(action == "saveTask" || action == "removeTask") {
+            			//if(action == "removeTask") {
+        					$("._edit_task").val("").prop("readonly", true);
+        					$("._edit_task_btns").prop("disabled", true);
+        					$("._manager_select_task").removeClass("active");
+        				//}
+            			getTasksList();
             		}
             	}else{ 
             		if(action == "login"){
@@ -57,7 +91,8 @@ $(document).ready(function(){
 	});
 
 
-	$("body").on("click",".ajax_img",function(){
+	$("body").on("click",".ajax_img",function(e){
+		e.preventDefault();
 	    if($(this).closest("form").find('input[type=file]').length > 0 && $('input[type=file]').get(0).files.length > 0){
 	    	var files = $('input[type=file]').get(0).files,
 			data = new FormData();
@@ -89,7 +124,8 @@ $(document).ready(function(){
 
 	});
 
-	$("#task_select").on("change",function(){
+	$("#task_select").on("change",function(e){
+		e.preventDefault();
 		var data = $(this).find("option:selected").data();
 		$("#db_info").html(data.dbinfo);
 		$("#task_text").html(data.task);
@@ -100,7 +136,8 @@ $(document).ready(function(){
 		$("[name='userquery'], [name='viewtable']").removeAttr("disabled");
 	});
 
-	$("body").on("click", "[name='viewtable']", function(){
+	$("body").on("click", "[name='viewtable']", function(e){
+		e.preventDefault();
 		var query = $("#task_select option:selected").data('qer'),
 		wrap = $($(this).data("result")),
 		this_ = this;

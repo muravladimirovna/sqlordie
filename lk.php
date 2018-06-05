@@ -47,7 +47,7 @@ printhead(); ?>
 						</div>
 						<form>
 							<input type="hidden" name="id" value="<?= $userinfo->{"id"}; ?>">
-							<a href="#" class="btn btn-default ajax_btn del_acc" data-action="removeUser"><b style="color:#d08080;">Удалить</b> свой аккаунт</a>
+							<a href="#" class="btn btn-default _ajax_btn del_acc" data-action="removeUser"><b style="color:#d08080;">Удалить</b> свой аккаунт</a>
 						</form>
 					</div>
 					<div class="col-5 panellk p-0">
@@ -66,7 +66,7 @@ printhead(); ?>
 								<span class="col-5">Повторите пароль:</span> 
 								<input class="form-control col-7" name="new_pass_2" type="password" size="15" maxlength="15">
 							</div>
-							<input class="btn btn-default ajax_btn" id="change" type="button" name="submit" value="Изменить" data-action="changePassword" style="width: 100%;">
+							<input class="btn btn-default _ajax_btn" id="change" type="button" name="submit" value="Изменить" data-action="changePassword" style="width: 100%;">
 							
 						</form>
 					</div>

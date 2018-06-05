@@ -413,8 +413,24 @@ option.true {
 }
 .all_tasks_table {
 	max-height: 50vh;
+	height: 400px;
 	min-height: 300px;
-	overflow-y: auto;
+	overflow-y: auto!important;
+	background-color: #fff;
+}
+.all_tasks_table .tr_item {
+    text-decoration: none;
+    background-color: #fff;
+    transition: all 0.5s ease;
+}
+.all_tasks_table .tr_item:hover,
+.all_tasks_table .tr_item.active {
+	background-color: #eee;
+}
+.all_tasks_table .tr_item .td_item {
+	color: #333;
+    line-height: 1.2em;
+    font-size: 14px;
 }
 .all_tasks_table .tr_item .td_item:first-child {
 	min-width: 35px;
@@ -422,7 +438,68 @@ option.true {
 .all_tasks_table .tr_item .td_item:nth-child(2) {
 	flex-grow: 1;
 }
+.edit_task-wrap,
+.create_task-wrap {
+	padding: 25px 15px 15px;
+	background-color: #fff;
+}
+.edit_task-wrap h3 {
+	font-size: 18px;
+}
+.edit_task-wrap textarea,
+.create_task-wrap textarea {
+	background-color: #eee;
+	width: 100%;
+	resize: none;
+   	height: 120px;
+   	border-radius: 5px;
+	padding: 10px 15px;
+    line-height: 1.2em;
+}
+.edit_task-wrap textarea[readonly] {
+	opacity: 0.8;
+}
+.edit_task-form,
+.create_task-form {
+	width: 100%;
+}
+.edit_task_message { display: none; }
+.scrollbar::-webkit-scrollbar-track {
+	border-radius: 5px;
+	background-color: #fff;
+}
 
+.scrollbar::-webkit-scrollbar {
+	width: 5px;
+	background-color: #fff;
+}
+.scrollbar::-webkit-scrollbar-thumb {
+	border-radius: 5px;
+	background-color: #d2d2d2;
+}
+.edit_task-form .edit_task_btns-wrap { margin-top: 10px; }
+.create_task-wrap { margin: 0 0 50px; }
+.create_task-wrap .show-btn {margin-bottom: 10px;}
+.manager_resp { display:block; min-width:1px; margin: 1.5rem 0!important; }
+.manager_resp > div {margin:0;}
+
+.create_task-form {
+	transition: all 0.5s ease;
+	height: 0px;
+	overflow: hidden;
+}
+.create_task-wrap.active .create_task-form {
+	height: 400px;
+}
+.create_task-wrap .show-btn { transition: all 0.5s ease; }
+.create_task-wrap.active .show-btn { 
+	background: transparent; 
+	border: none; 
+	pointer-events: none; 
+	color: #3c3c3c; 
+	font-size: 16px;
+    font-weight: 600;
+    padding-bottom: 15px!important;}
 
 @media (max-width: 992px){
 	 div#navbarSupportedContent {

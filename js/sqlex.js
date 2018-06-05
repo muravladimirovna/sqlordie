@@ -51,7 +51,8 @@ $(document).ready(function(){
 	getScoreList();
 
 
-	$("body").on("click", "[name='userquery']", function(){
+	$("body").on("click", "[name='userquery']", function(e){
+		e.preventDefault();
 		var num = $("#task_select").val(),
 		query = $("#task_select option:selected").data('qer'),
 		uquery = $('#sqltext').val(),

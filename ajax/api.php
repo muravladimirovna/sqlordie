@@ -4,6 +4,7 @@ require_once("../autoload.php");
 $sqlex = new SqlEx();
 $user = new User();
 $users = new Users();
+$manager = new Manager();
 
 $action = "";
 $data = array();
@@ -87,6 +88,14 @@ switch ($action) {
 		break;
 	case "getGroups":
 		$result = $users->getGroups();
+		break;
+	case "saveTask":
+		if(!empty($data))
+			$result = $manager->saveTask($data);
+		break;
+	case "createTask":
+		if(!empty($data))
+			$result = $manager->createTask($data);
 		break;
 }
 
