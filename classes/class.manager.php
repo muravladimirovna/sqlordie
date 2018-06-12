@@ -7,7 +7,7 @@ class Manager {
       	
       	$this->db = new Connection();
 
-      	$this->isAdmin();
+      	//$this->isAdmin();
 
 		$this->tasks = $_SESSION["tasks"];
       	$this->sqlex = new SqlEx();
@@ -52,6 +52,7 @@ class Manager {
 			}
 		}
 	}
+
 	function createTask($data = false) {
 		if(!empty($data)) {
 			$task_text = !empty($data["task_text"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["task_text"]))) : "";
@@ -76,22 +77,19 @@ class Manager {
 		}
 	}
 
-	function removeTask() {
-		$task_id = $_SESSION["task_id"];
-
-		$result = $this->db->dbcon_rw->query("DELETE FROM qer WHERE id = '"  .$task_id . "';");
-		if($result) {
-			$result = $this->db->dbcon_rw->query("DELETE FROM tasks WHERE id = '".  $task_id . "';");
+	function removeTask($data = false) {
+		$task_id = $data["task_id"];
+		if(!empty($task_id)) {
+			$result = $this->db->dbcon_rw->query("DELETE FROM qer WHERE id = '"  .$task_id . "';");
 			if($result) {
-				$_SESSION["task_text"] = '';
-				$_SESSION["answ_text"] = '';
-
-				$count = $this->db->dbcon_rw->query("SELECT count(id) as count FROM tasks;");
-				$count = $count ? $count->fetch_array(MYSQLI_ASSOC) : false;
-				//$array = ['success' => true, 'result' => ['next' => $count ? $count['count'] + 1 : false] ];
-				return  '<div class="alert alert-success" role="alert">Задание удалено!</div>';
+				$result = $this->db->dbcon_rw->query("DELETE FROM tasks WHERE id = '".  $task_id . "';");
+				if($result) {
+					return  '<div class="alert alert-success" role="alert">Задание удалено!</div>';
+				} else {
+					return '<div class="alert alert-danger" role="alert">Ошибка при удалении задания</div>';
+				}
 			} else {
-				return '<div class="alert alert-danger" role="alert">Ошибка при удалении задания</div>';
+				return '<div class="alert alert-danger" role="alert">Ошибка при удалении ответа</div>';
 			}
 		} else {
 			return '<div class="alert alert-danger" role="alert">Ошибка при удалении ответа</div>';
@@ -102,6 +100,22 @@ class Manager {
 		// $result = $this->db->dbcon_rw->query("SELECT id,answers FROM users;");
 	}
 
+	function createDb($data = false) {
+		if(!empty($data)) {
+			$db_info = !empty($data["db_info"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["db_info"]))) : "";
+			$db_name = !empty($data["db_name"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["db_name"]))) : "";
+
+			if(!empty($db_info) && !empty($db_name)) {
+				$result = $this->db->dbcon_rw->query("insert into `db`(info, name) values ('".$db_info."','".$db_name."');");
+				if($result) {
+					return '<div class="alert alert-success" role="alert">База данных успешно сохранена!</div>';
+				} else {
+					return '<div class="alert alert-danger" role="alert">Ошибка при сохранении базы данных</div>';
+				}
+			}
+			return '<div class="alert alert-danger" role="alert">Не все поля заполнены!</div>';
+		}
+	}
 
 
 

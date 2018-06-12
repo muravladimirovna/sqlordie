@@ -7,6 +7,8 @@ if(!function_exists("printhead")){
 				<title>Sql-Or-Die</title>
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1">
+				<link rel="icon" type="image/png" href="/sql_redisign/img/sql.png" />
+
 				<!-- Latest compiled and minified CSS -->
 				<!-- link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" -->
 				<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
@@ -25,7 +27,7 @@ if(!function_exists("printheader")){
 	echo '<header>
 			<nav class="navbar navbar-default navbar-expand-lg navbar-light bg-light" role="navigation">
 				<div class="container">
-					<div class="navbar-brand" href="#">SQL</div>
+					<div class="navbar-brand site_logo" href="#"></div>
 					<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="#navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 						<span class="navbar-toggler-icon"></span>
 					</button>
@@ -83,7 +85,7 @@ if(!function_exists("printfooter")){
 				<script src="js/bootstrap-tab.js"></script-->
 				<div class="footer p-4" style="position: relative; bottom:0;">
 					<div class="container">
-						<p>© taviak 2017</p>
+						<p>© taviak 2016 - ' . date("Y") . '</p>
 					</div>
 				</div>
 			</footer>';

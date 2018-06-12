@@ -1,3 +1,35 @@
+function base_url(segment){
+   // get the segments
+   pathArray = window.location.pathname.split( '/' );
+   // find where the segment is located
+   indexOfSegment = pathArray.indexOf(segment);
+   // make base_url be the origin plus the path to the segment
+   return window.location.origin + pathArray.slice(0,indexOfSegment).join('/') + '/';
+}
+
+function getGroups(){
+    $.ajax({
+        url: 'ajax/api.php?action=getGroups',
+        type: 'POST',
+        dataType: 'json',
+        processData: false, // Не обрабатываем файлы (Don't process the files)
+        contentType: false, // Так jQuery скажет серверу что это строковой запрос
+        success: function( respond ){
+    		$("#groupslist").html("");
+        	$.each(respond,function(i,el){
+        		var item = $("<option>").val(el.id).html(el.name);
+        		console.log(item);
+            	$("#groupslist").append(item);
+        	})
+           
+
+        },
+        error: function( jqXHR, textStatus, errorThrown ){
+            console.log('ОШИБКИ AJAX запроса: ' + textStatus );
+        }
+    });
+}
+	
 function fillTable(wrap, data){
 	if(wrap != "" && wrap.length > 0 && data != ""){
     	wrap.show().find("table tbody").html("");
@@ -43,6 +75,60 @@ function getTasksList() {
     });
 }
 
+function getDbList() {
+	// получение списка баз данных
+	$.ajax({
+        url: "ajax/api.php",
+        data: {
+        	action: "getDbList"
+        },
+        dataType: 'json',
+        type: "GET",
+        success: function(data){
+			if(data != ""){
+				allTasks = data;
+		    	wrap = $("#dblist").html("");
+		    	$.each(data, function(i, row){
+		    		var input = $("<input>").addClass("_create_task_radio").prop({"type":"radio","name":"db","value":row.id,"id":"dbs-"+i});
+		    		var label = $("<label>").prop('for', 'dbs-'+i);
+		    		label.text(row.name).prepend(input);
+	    			wrap.append(label);
+		       	});
+		    }
+        },
+        error: function(){
+            console.log("Ошибка отправки запроса");
+        },
+    });
+}
+
+function getGroupList() {
+	// получение списка баз данных
+	$.ajax({
+        url: "ajax/api.php",
+        data: {
+        	action: "getGroups"
+        },
+        dataType: 'json',
+        type: "GET",
+        success: function(data){
+			if(data != ""){
+				allTasks = data;
+		    	wrap = $("#dblist").html("");
+		    	$.each(data, function(i, row){
+		    		var input = $("<input>").addClass("_create_task_radio").prop({"type":"radio","name":"db","value":row.id,"id":"dbs-"+i});
+		    		var label = $("<label>").prop('for', 'dbs-'+i);
+		    		label.text(row.name).prepend(input);
+	    			wrap.append(label);
+		       	});
+		    }
+        },
+        error: function(){
+            console.log("Ошибка отправки запроса");
+        },
+    });
+}
+
 $(document).ready(function(){
 
 	$("body").on("click","._ajax_btn",function(e){
@@ -54,8 +140,10 @@ $(document).ready(function(){
 
 		$("#ajaxresp").html("");
 
+		var url = base_url() + "ajax/api.php";
+
 		$.ajax({
-            url: "ajax/api.php",
+            url: url,
             data: {
             	data: data,
             	action: action
@@ -160,29 +248,7 @@ $(document).ready(function(){
 	    });
 	});
 
-	function getGroups(){
-	    $.ajax({
-	        url: 'ajax/api.php?action=getGroups',
-	        type: 'POST',
-	        dataType: 'json',
-	        processData: false, // Не обрабатываем файлы (Don't process the files)
-	        contentType: false, // Так jQuery скажет серверу что это строковой запрос
-	        success: function( respond ){
-        		$("#groupslist").html("");
-	        	$.each(respond,function(i,el){
-	        		var item = $("<option>").val(el.id).html(el.name);
-	        		console.log(item);
-	            	$("#groupslist").append(item);
-	        	})
-	           
-
-	        },
-	        error: function( jqXHR, textStatus, errorThrown ){
-	            console.log('ОШИБКИ AJAX запроса: ' + textStatus );
-	        }
-	    });
-	}
-	getGroups()
+	getGroups();
 
 
 });
@@ -193,3 +259,10 @@ function ctrlEnter(event, formElem){
     }
 }
 
+$("body").on("click", "._curr_tab-link a", function(e){
+	e.preventDefault();
+	var wrap = $(this).closest("._curr_tab-wrap");
+	wrap.find("._curr_tab-link a, ._curr_tab_one").removeClass("active");
+	$($(this).addClass("active").attr("href")).addClass("active");
+
+});

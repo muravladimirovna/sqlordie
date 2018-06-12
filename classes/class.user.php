@@ -69,7 +69,7 @@ class User {
 	function isAuth(){
 		if (isset($_SESSION['user']['login']) and isset($_SESSION['user']['id'])){
 			if(empty($_SESSION['user']['login']) || empty($_SESSION['user']['id'])){
-				header('Location: login.php'); // Если пусты, то выводим форму входа
+				header('Location: ../login.php'); // Если пусты, то выводим форму входа
 			}else{
 				$result = $this->db->dbcon_rw->query("UPDATE users SET score = (SELECT COUNT(num) FROM answers WHERE " . $_SESSION['user']['login'] . " <> '') WHERE login = '" . $_SESSION['user']['login'] . "' ;");
 				if(!$result) return false;
@@ -88,7 +88,7 @@ class User {
 				return json_encode($_SESSION['user']);
 			}
 		}else{
-			header('Location: login.php');
+			header('Location: ../login.php');
 		}
 	}
 
@@ -123,7 +123,7 @@ class User {
 			if ($id == $_SESSION['user']['id']) {
 				unset($_SESSION['user']);
 				session_destroy();
-				header("Location:login.php");
+				header("Location: ../login.php");
 			}
 			return $id;
 		}

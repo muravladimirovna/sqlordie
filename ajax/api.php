@@ -48,8 +48,9 @@ switch ($action) {
 		$result = $sqlex->getTasks();
 		break;
 	case "getGroupList":
-		$id = $data['id'] ? $data['id'] : "";
-		$result = $users->getGroupList($id);
+		$id = $data['id'] ? $data['id'] : $_REQUEST["groupid"];
+		$order = $_REQUEST["order"] ? $_REQUEST["order"] : "users.score DESC";
+		$result = $users->getGroupList($id, $order);
 		break;
 	case "getResultTable":
 		$query = $_REQUEST["query"] ? $_REQUEST["query"] : "";
@@ -96,6 +97,17 @@ switch ($action) {
 	case "createTask":
 		if(!empty($data))
 			$result = $manager->createTask($data);
+		break;
+	case "removeTask":
+		if(!empty($data))
+			$result = $manager->removeTask($data);
+		break;
+	case "getDbList":
+		$result = $sqlex->getDbList();
+		break;
+	case "createDb":
+		if(!empty($data))
+			$result = $manager->createDb($data);
 		break;
 }
 

@@ -9,14 +9,14 @@ class SqlEx {
 		$this->user = new User();
 		# накатить дамп с ответами
 		# и только потом запустить
-		# $this->updateTable();
+		if($_REQUEST['update'] == 1) $this->updateTable();
 
 	}
 
 	function getTasks($text = false, $user_id = "", $close = true){
 		$user_id = $user_id ? $user_id : $_SESSION['user']['id'];
 		$tasks = array();
-		$query = "SELECT `tasks`.id, `tasks`.task, `tasks`.db, `qer`.qer, `db`.info as 'dbinfo' FROM ((tasks INNER JOIN qer ON `tasks`.id = `qer`.id) INNER JOIN db ON `db`.id = `tasks`.db);";
+		$query = "SELECT `tasks`.id, `tasks`.task, `tasks`.db, `qer`.qer, `db`.info as 'dbinfo' FROM ((tasks INNER JOIN qer ON `tasks`.id = `qer`.id) INNER JOIN db ON `db`.id = `tasks`.db) ORDER BY id;";
 		$answers =  $this->user->getUserAnswers();
 
 		if ($stmt = $this->db->dbcon_rw->prepare($query)) {
@@ -70,7 +70,7 @@ class SqlEx {
 		}
 	}
 
-	function compareResult($query, $uquery, $conn = ""){
+	function compareResult($query, $uquery, $conn = "") {
 		$conn = $conn ? $conn : "";
 		$ttable = $this->getResultTable($query, $conn);
 		$utable = $this->getResultTable($uquery, $conn);
@@ -199,6 +199,23 @@ class SqlEx {
 		}
 		$this->db->dbcon_rw->close();
 		return $users;
+	}
+
+	function getDbList() {		
+		$q = "SELECT * FROM db";
+		if ($stmt = $this->db->dbcon_rw->prepare($q)) {
+		    $stmt->execute();
+		    $stmt->bind_result($id, $info, $name);
+		    while ($stmt->fetch()) {
+		        $dbs[] = ['id' => $id, 'name' => $name, 'info' => $info];
+		    }
+		    $stmt->close();
+		    if(!empty($dbs)) {
+		    	return json_encode($dbs);
+		    }
+		}else{
+			return false;
+		}
 	}
 
 
