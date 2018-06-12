@@ -23,6 +23,12 @@
 main{
 	min-height: calc(100vh - 105px);
 }
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
 textarea{
 	background-color: #eee;
 	background-image: none!important;
@@ -559,6 +565,7 @@ ul.nav.nav-pills.curr_tabs {
 	opacity: 0;
 	transition: all 0.5s ease;
 	display: none;
+    margin-bottom: 50px;
 }
 ._curr_tab_one.active {
 	display: flex;
@@ -589,6 +596,9 @@ ul.nav.nav-pills.curr_tabs {
 table.dataTable tr {
 	cursor: pointer;
 }
+table.dataTable tr:hover {
+	background-color: #eee;
+}
 
 .dataTables_length, .dataTables_filter, .dataTables_info, .dataTables_paginate {
     padding: 0 15px 0;
@@ -599,18 +609,120 @@ table.dataTable tr {
 }
 
 .dataTables_paginate a {
-    padding: 4px 5px;
+    padding: 4px 10px;
     border: 1px solid #d2d2d2;
     margin: 0 5px 0 0;
     text-decoration: none;
     color: #333;
     cursor: pointer;
+    border-radius: 5px;
 }
 
 .dataTables_paginate {
-	margin: 10px 0 20px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #dee2e6;
+    padding-top: 15px;
 }
-
+.dataTables_paginate .paginate_button.current {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
 .dataTables_paginate a:hover {
     background-color: #eee;
+}
+.svg {
+	background-size: contain;
+	background-repeat: no-repeat;
+}
+.svg.svg-edit {
+	background-image: url('../img/svg/edit.svg');
+}
+.dataTable span.svg {
+    width: 25px;
+    height: 25px;
+    display:  inline-block;
+}
+.dataTable form.btn.btn-success {
+    width:  40px;
+    height:  40px;
+    display:  flex;
+    justify-content:  center;
+    align-items:  center;
+    padding:  0px;
+}
+span.edit-icon svg path {
+    -webkit-text-fill-color: #fff;
+    fill: #fff;
+}
+span.edit-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: -4px;
+}
+.modals {
+	display: none;
+}
+.edit_user-modal {
+    width:  400px;
+    max-width:  95vw;
+    padding: 40px 15px;
+}
+.edit_user-modal .input-group,
+.contactus .input-group {
+    display:  flex;
+    flex-direction:  column;
+    margin-bottom: 15px;
+}
+.edit_user-modal input[type="text"] {
+    padding:  0 10px;
+    height:  39px;
+    font-size:  16px;
+}
+.edit_user-modal label,
+.contactus label {
+    font-size:  14px;
+    font-weight: bold;
+    line-height:  1;
+}
+.dropdown-menu.open ul.dropdown-menu.inner {
+    display: block;
+}
+.btn-group.bootstrap-select {
+    max-width: 100%;
+}
+.dataTables_wrapper .bootstrap-select {
+    max-width: 80px;
+}
+.paginate_button.disabled {
+	opacity: 0.7;
+	background-color: #fff!important;
+}
+form.contactus {
+	width: 100%;
+	max-width: 400px;
+}
+form.contactus input {
+    height: 45px;
+	font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #d9d9d9;
+}
+form.contactus input[type="text"],
+form.contactus textarea {
+    padding:  0 10px;
+	background-color: #fff;
+	color: #333;
+	font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #d9d9d9;
+}
+form.contactus label {
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 1;
+    margin: 5px 0 6px;
 }

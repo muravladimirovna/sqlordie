@@ -3,12 +3,18 @@ class User {
 
     function __construct() {
       	
+      	require("config.php");
       	require_once("class.connection.php");
 
       	$this->db = new Connection();
+      	$this->manager_email = $manager_email;
+      	$this->manager_password = $manager_password;
+      	$this->manager_email_to = $manager_email_to;
+      	$this->secret_key = $secret_key;
+		$this->mailSMTP = new SendMailSmtpClass($this->manager_email, $this->manager_password, 'ssl://smtp.yandex.ru', 465, "utf-8");
 
       	if(isset($_SESSION['user']) and !empty($_SESSION['user'])){
-      		foreach ($$_SESSION['user'] as $key => $value) {
+      		foreach ($_SESSION['user'] as $key => $value) {
       			$this->$key = $value;
       		}
       	}
@@ -160,12 +166,13 @@ class User {
 	function regUser($data){
 		if(isset($data["name"]) and !empty($data["name"]) and isset($data["lastname"]) and !empty($data["lastname"]) and isset($data["login"]) and !empty($data["login"]) and isset($data["password"]) and !empty($data["password"])){
 
-			$name = stripslashes($data["name"]);
-			$lastname = stripslashes($data["lastname"]);
-			$login = stripslashes($data["login"]);
-			$password = stripslashes($data["password"]);
+			$name = urldecode($this->db->dbcon_rw->real_escape_string($data["name"]));
+			$lastname = urldecode($this->db->dbcon_rw->real_escape_string($data["lastname"]));
+			$login = urldecode($this->db->dbcon_rw->real_escape_string($data["login"]));
+			$password = urldecode($this->db->dbcon_rw->real_escape_string($data["password"]));
+			$email = urldecode($this->db->dbcon_rw->real_escape_string($data["email"]));
 
-			$result_1 = $this->db->dbcon_rw->query("INSERT INTO users (login, password, name, lastname, score, avatar) values ('".$login."','".$password."','".$name."','".$lastname."', '0', 'default-user.png');");
+			$result_1 = $this->db->dbcon_rw->query("INSERT INTO users (login, password, name, lastname, email, score, avatar) values ('".$login."','".$password."','".$name."','".$lastname."','". $email ."', '0', 'default-user.png');");
 			if($result_1){
 				/*$result_2 = $this->db->dbcon_rw->query("ALTER TABLE answers ADD ".$login." VARCHAR( 200 ) NOT NULL DEFAULT ''; ");
 				if(!$result_2){
@@ -194,6 +201,32 @@ class User {
 		$user_answers = $answers ? $answers->fetch_array(MYSQLI_ASSOC) : false;
 		$user_answers = $user_answers ? unserialize($user_answers["answers"]) : false;
 		return $user_answers;
+	}
+
+	function sendMail($data) {	
+		if (isset($data['g-recaptcha-response'])) {
+		    $url_to_google_api = "https://www.google.com/recaptcha/api/siteverify";
+		    $query = $url_to_google_api . '?secret=' . $this->secret_key . '&response=' . $data['g-recaptcha-response'] . '&remoteip=' . $_SERVER['REMOTE_ADDR'];
+		    $response = json_decode(file_get_contents($query));
+		    if ($response->success) {
+				$subject = $data['subject'] ? $data['subject'] : "Письмо с сайта sql";
+				$message = $data['message'] ? $data['message'] : false;
+				if($message) {
+					$user_from = !empty($this->name) ? $this->name . ' ' . $this->lastname : "John Doe";			
+					$from = [$user_from, $this->manager_email];
+					$to = $this->manager_email_to;		
+					// $mailSMTP->addFile("test.jpg");
+					$result =  $this->mailSMTP->send($to, 'Тема письма', 'Текст письма', $from); 		
+					if($result === true) echo '<div class="alert alert-success">Письмо успешно отпралено</div>';
+					else echo '<div class="alert alert-danger">Не удалось отправить письмо: ' . $result . '</div>';
+				} else echo '<div class="alert alert-danger">Не удалось отправить письмо</div>';
+				
+		    } else {
+		        echo '<div class="alert alert-danger">Извините но похоже вы робот ¯\(0_0)/¯</div>';
+		    }
+		} else {
+		    echo '<div class="alert alert-danger"Вы не прошли валидацию reCaptcha</div>';
+		}
 	}
 
 

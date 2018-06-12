@@ -4,6 +4,7 @@ require_once("classes/class.user.php");
 require_once("classes/class.users.php");
 require_once("classes/class.sqlex.php");
 require_once("classes/class.manager.php");
+require_once("classes/SendMailSmtpClass.php");
 
 $dir = "modules/";
 	$files = scandir($dir);   

@@ -117,6 +117,32 @@ class Manager {
 		}
 	}
 
+	function saveUser($data = false) {
+		if(!empty($data)) {
+			$id = $data["id"] ? intval($data["id"]) : "";
+			$group_id = $data["group_id"] ? intval($data["group_id"]) : "";
+			$name = !empty($data["name"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["name"]))) : "";
+			$lastname = !empty($data["lastname"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["lastname"]))) : "";
+			$login = !empty($data["login"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["login"]))) : "";
+			$email = !empty($data["email"]) ? urldecode($this->db->dbcon_rw->real_escape_string(mb_strtolower($data["email"]))) : "";
+
+			if(!empty($id) && !empty($name) && !empty($lastname) && !empty($login)) {
+
+				$result = $this->db->dbcon_rw->query("update users set name = '". $name ."', lastname = '". $lastname ."', login = '". $login ."', email = '". $email ."' where id = '". $id ."';");
+				if($result && !empty($group_id)) {
+					$result = $this->db->dbcon_rw->query("update users_groups set group_id = '". $group_id ."' where user_id = '". $id ."';");
+					if($result) {
+						return '<div class="alert alert-success" role="alert">Изменения успешно сохранены!</div>'; 
+					} else {				
+						return '<div class="alert alert-danger" role="alert">Ошибка при сохранении группы</div>';
+					}
+				} else {
+					return '<div class="alert alert-danger" role="alert">Ошибка при сохранении пользователя</div>';
+				}
+			}
+		}
+	}
+
 
 
 } ?>

@@ -109,6 +109,14 @@ switch ($action) {
 		if(!empty($data))
 			$result = $manager->createDb($data);
 		break;
+	case "saveUser":
+		if(!empty($data))
+			$result = $manager->saveUser($data);
+		break;
+	case "sendMail":
+		if(!empty($data))
+			$result = $user->sendMail($data);
+		break;
 }
 
 if(isset($result) and $result){

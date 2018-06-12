@@ -104,9 +104,38 @@ printhead(); ?>
 	</div> 
 </main>
 
+<div class="modals">
+	<div id="edit_user">
+		<form action="get" class="edit_user-modal _edit_user_form" id="edit_user-form">
+			<div class="col-12 input-group">
+				<div class="ajaxresp"></div>
+			</div>
+			<div class="col-12 input-group user_name">
+				<label>Имя</label>
+				<input type="text" name="name" value="">
+			</div>
+			<div class="col-12 input-group user_lastname">
+				<label>Фамилия</label>
+				<input type="text" name="lastname" value="">
+			</div>
+			<div class="col-12 input-group user_login">
+				<label>Логин</label>
+				<input type="text" name="login" value="">
+			</div>
+			<div class="col-12 input-group">
+				<label>Группа</label>
+				<select name="group_id" class="groupslist"></select>
+			</div>
+			<input type="hidden" name="id">
+			<div class="col-12 input-group">
+				<input type="submit" class="btn btn-success _ajax_btn" data-action="saveUser" value="Сохранить">
+			</div>
+		</form>
+	</div>
+</div>
+
 <?printfooter();?> 
 <script src="js/adminpanel.js"></script>
-<script src="js/jquery.DataTables.min.js"></script>
 
 </body>
 </html>
