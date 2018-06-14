@@ -122,7 +122,7 @@ printhead(); ?>
 				<label>Логин</label>
 				<input type="text" name="login" value="">
 			</div>
-			<div class="col-12 input-group">
+			<div class="col-12 input-group" style="display:none;">
 				<label>Группа</label>
 				<select name="group_id" class="groupslist"></select>
 			</div>

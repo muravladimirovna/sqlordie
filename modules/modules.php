@@ -38,7 +38,7 @@ if(!function_exists("printheader")){
 					<ul class="nav navbar-nav mr-auto">
 						<li class="nav-item p-3"><a href="index.php"  style="display:none;">На главную</a></li>
 						<li class="nav-item p-3"><a href="sqlex.php">Практические задания</a></li>
-						<li class="nav-item p-3"><a href="esqlex.php" disabled>Операторы модификации данных</a></li>
+						<li class="nav-item p-3"><a href="#" disabled>Операторы модификации данных</a></li>
 						<li class="nav-item p-3"><a href="contacts.php" >О разработчике</a></li>
 					</ul>
 					<ul class="nav navbar-nav navbar-right">

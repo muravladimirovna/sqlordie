@@ -19,16 +19,14 @@ class User {
       		}
       	}
 
+      	$this->request = '/' . explode('/', $_SERVER["REQUEST_URI"])[1] . '/';
+
 	}
 
 
-	function Authorize($data){
+	function Authorize($data, $flag = false) {
 
 		if(isset($data) and !empty($data)){
-
-			 header("Content-type: text/plain; charset=windows-1251");
-			 header("Cache-Control: no-store, no-cache, must-revalidate");
-			 header("Cache-Control: post-check=0, pre-check=0", false);
 
 			if(isset($data["login"]) and !empty($data["login"])){
 				$login = $data["login"]; 
@@ -37,19 +35,18 @@ class User {
 				$password = $data["password"]; 
 			}
 			if(!isset($login) || !isset($password)){
-				return "<font color=\"red\">Не все поля заполнены</font>"; 
+				return "<font color='red'>Не все поля заполнены</font>"; 
 			}
 			//если логин и пароль введены,то обрабатываем их, чтобы теги и скрипты не работали, мало ли что люди могут ввести
-			$login = stripslashes($login);
-			$login = htmlspecialchars($login);
-			$password = stripslashes($password);
-			$password = htmlspecialchars($password);
+			$login = urldecode($this->db->dbcon_rw->real_escape_string($login));
+			$password = urldecode($this->db->dbcon_rw->real_escape_string($password));
 			//удаляем лишние пробелы
 			$login = trim($login);
 			$password = trim($password);
 			//извлекаем из базы все данные о пользователе с введенным логином
 			$q = "SELECT users.id, users.name, users.lastname, users.login, users.password, users.avatar, users.score, users_groups.group_id, groups.name as 'group', users_roles.role_id as 'role' FROM (((users INNER JOIN users_groups ON users.id = users_groups.user_id) INNER JOIN groups ON groups.id = users_groups.group_id) INNER JOIN users_roles ON users.id = users_roles.user_id)  WHERE users.login='".$login."' ;";
 			$result = $this->db->dbcon_rw->query($q);
+
 			if(!$result) return false;
 			$myrow = $result->fetch_array(MYSQLI_ASSOC);
 			if (empty($myrow["password"])){	//если пользователя с введенным логином не существует
@@ -62,7 +59,8 @@ class User {
 						$_SESSION['user'][$key] = $value;
 						$this->$key = $value;
 					}
-					return json_encode($_SESSION['user']);
+					if($flag) echo '<div class="alert alert-success">Регистрация прошла успешно!</div>';
+					else return json_encode($_SESSION['user']);
 				}else{	//если пароли не сошлись
 					unset($_SESSION['user']);
 					return false;
@@ -75,7 +73,7 @@ class User {
 	function isAuth(){
 		if (isset($_SESSION['user']['login']) and isset($_SESSION['user']['id'])){
 			if(empty($_SESSION['user']['login']) || empty($_SESSION['user']['id'])){
-				header('Location: ../login.php'); // Если пусты, то выводим форму входа
+				header("Location: " . $this->request . "login.php");  // Если пусты, то выводим форму входа
 			}else{
 				$result = $this->db->dbcon_rw->query("UPDATE users SET score = (SELECT COUNT(num) FROM answers WHERE " . $_SESSION['user']['login'] . " <> '') WHERE login = '" . $_SESSION['user']['login'] . "' ;");
 				if(!$result) return false;
@@ -94,7 +92,7 @@ class User {
 				return json_encode($_SESSION['user']);
 			}
 		}else{
-			header('Location: ../login.php');
+			header("Location: " . $this->request . "login.php"); 
 		}
 	}
 
@@ -129,7 +127,7 @@ class User {
 			if ($id == $_SESSION['user']['id']) {
 				unset($_SESSION['user']);
 				session_destroy();
-				header("Location: ../login.php");
+				header("Location: " . $this->request . "login.php"); 
 			}
 			return $id;
 		}
@@ -160,34 +158,50 @@ class User {
 	function unlogin(){
 		unset($_SESSION["user"]);
 		session_destroy();
-		header("Location: ../sqlex.php"); 
+		header("Location: " . $this->request . "login.php"); 
 	}
 
 	function regUser($data){
-		if(isset($data["name"]) and !empty($data["name"]) and isset($data["lastname"]) and !empty($data["lastname"]) and isset($data["login"]) and !empty($data["login"]) and isset($data["password"]) and !empty($data["password"])){
+		if(!empty($data["name"]) and !empty($data["lastname"]) and !empty($data["login"]) and !empty($data["password"]) and !empty($data["email"])){
 
 			$name = urldecode($this->db->dbcon_rw->real_escape_string($data["name"]));
 			$lastname = urldecode($this->db->dbcon_rw->real_escape_string($data["lastname"]));
 			$login = urldecode($this->db->dbcon_rw->real_escape_string($data["login"]));
 			$password = urldecode($this->db->dbcon_rw->real_escape_string($data["password"]));
 			$email = urldecode($this->db->dbcon_rw->real_escape_string($data["email"]));
+			$groups = urldecode($this->db->dbcon_rw->real_escape_string($data["groups"]));
 
-			$result_1 = $this->db->dbcon_rw->query("INSERT INTO users (login, password, name, lastname, email, score, avatar) values ('".$login."','".$password."','".$name."','".$lastname."','". $email ."', '0', 'default-user.png');");
-			if($result_1){
-				/*$result_2 = $this->db->dbcon_rw->query("ALTER TABLE answers ADD ".$login." VARCHAR( 200 ) NOT NULL DEFAULT ''; ");
-				if(!$result_2){
-					$result_3 = $this->db->dbcon_rw->query("DELETE FROM users WHERE login = '".$login."';");
-					return false;
-				}*/
-				return $this->Authorize($data);
-			}else{ 
-				return json_encode(array(
-					"success" => false,
-					"message" => "<font color='red'>Ошибка записи ячейки</font>"
-				));
+			$user =  $this->db->dbcon_rw->query("SELECT id FROM `users` WHERE login = '" . $login . "'; ");
+			$user = $user ? $user->fetch_array(MYSQLI_ASSOC) : false;
+
+			if($user) {
+				echo '<div class="alert alert-danger">Пользователь с таким логином уже зарегистрирован!</div>';
+			}else {
+
+				$result_1 = $this->db->dbcon_rw->query("INSERT INTO users (login, password, name, lastname, email, score, avatar) values ('".$login."','".$password."','".$name."','".$lastname."','". $email ."', '0', 'default-user.png');");
+				if($result_1){				
+					$user =  $this->db->dbcon_rw->query("SELECT id FROM `users` WHERE login = '" . $login . "'; ");
+					$user = $user ? $user->fetch_array(MYSQLI_ASSOC) : false;
+					if($user) {
+						$user_id = $user["id"];
+						if(!empty($groups)) {
+							$result =  $this->db->dbcon_rw->query("INSERT INTO `users_groups`(`user_id`, `group_id`) VALUES ('" . $user_id . "', '" . $groups . "');");
+							$result =  $this->db->dbcon_rw->query("INSERT INTO `users_roles`(`user_id`, `role_id`) VALUES ('" . $user_id . "', 2);");
+							if($result) {
+								return $this->Authorize($data, true);
+							} else echo '<div class="alert alert-danger">Ошибка авторизации!</div>';
+						}
+					} else echo '<div class="alert alert-danger">Ошибка авторизации!</div>';
+					
+				}else{ 
+					return json_encode([
+						"success" => false,
+						"message" => "<font color='red'>Ошибка записи</font>"
+					]);
+				}
 			}
 		}else{
-			return false;
+			echo '<div class="alert alert-danger">Не все поля заполнены</div>';
 		}
 					
 	}
@@ -216,7 +230,7 @@ class User {
 					$from = [$user_from, $this->manager_email];
 					$to = $this->manager_email_to;		
 					// $mailSMTP->addFile("test.jpg");
-					$result =  $this->mailSMTP->send($to, 'Тема письма', 'Текст письма', $from); 		
+					$result =  $this->mailSMTP->send($to, $subject, '<p>' . $message . '</p>', $from); 		
 					if($result === true) echo '<div class="alert alert-success">Письмо успешно отпралено</div>';
 					else echo '<div class="alert alert-danger">Не удалось отправить письмо: ' . $result . '</div>';
 				} else echo '<div class="alert alert-danger">Не удалось отправить письмо</div>';
@@ -225,7 +239,7 @@ class User {
 		        echo '<div class="alert alert-danger">Извините но похоже вы робот ¯\(0_0)/¯</div>';
 		    }
 		} else {
-		    echo '<div class="alert alert-danger"Вы не прошли валидацию reCaptcha</div>';
+		    echo '<div class="alert alert-danger">Вы не прошли валидацию reCaptcha</div>';
 		}
 	}
 

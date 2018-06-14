@@ -6,6 +6,7 @@ printhead(); ?>
 	<main class="container">
 		<div class="" id="loginform">
 			<form class="col-10 col-sm-8 col-md-6 col-lg-4 p-4 navbar-form navbar-left" name="reg" action="action_reg.php" method="post" id="regform">
+				<div id="ajaxresp"></div>
 				<div class="input-group p-1" id="inputname">
 					<span class="input-group-addon col-12 col-sm-4">Имя:</span>
 					<input class="form-control col-12 col-sm-8" name="name" type="text" size="15" maxlength="15" required>

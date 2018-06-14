@@ -46,8 +46,8 @@ class Users {
 	}
 
 	function getGroupList($groupid = "", $order = "users.score DESC"){
+		$groupid = !empty($groupid) ? $groupid : $_SESSION['user']['group_id'];
 		if(!empty($groupid)) {
-			$groupid = !empty($groupid) ? $groupid : $_SESSION['user']['group_id'];
 
 			$q = "SELECT users.id, users.name, users.lastname, users.login, users.password, users.avatar, users.score, users_groups.group_id, groups.name as 'group', users_roles.role_id as 'role' FROM (((users INNER JOIN users_groups ON users.id = users_groups.user_id) INNER JOIN groups ON groups.id = users_groups.group_id) INNER JOIN users_roles ON users.id = users_roles.user_id) WHERE users_groups.group_id = " . $groupid . " GROUP BY users.id ORDER BY " . $order . " ;";
 

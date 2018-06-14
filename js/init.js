@@ -154,7 +154,10 @@ $(document).ready(function(){
             	if(data){
             		$("#ajaxresp, .ajaxresp").html(data);
             		if(action == "login" || action=="regUser"){
-            			document.location.href="lk.php";
+            			setTimeout(()=>{
+            				document.location.href="lk.php";
+            			}, 1000)
+            			
             		}else if(action == "saveTask" || action == "removeTask" || action == "createTask") {
     					$("._edit_task").val("").prop("readonly", true);
     					$("._edit_task_btns").prop("disabled", true);
@@ -163,7 +166,7 @@ $(document).ready(function(){
             		} else if(action == "createDb") {
 						getDbList()
             		} else if(action == "saveUser") {
-						$("._users_groups").trigger("change");
+						$("._users_groups .dropdown-menu li.selected").trigger("click");
             		}
             	}else{ 
             		if(action == "login"){

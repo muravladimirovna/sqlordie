@@ -361,7 +361,7 @@ select.task_num option {
 	width: 100%;
 }
 .middle:after {
-    display: block;
+   /* display: block;*/
     content: '';
     height: 100%;
     width: 100%;
