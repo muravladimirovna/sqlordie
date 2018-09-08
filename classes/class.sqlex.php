@@ -13,10 +13,10 @@ class SqlEx {
 
 	}
 
-	function getTasks($text = false, $user_id = "", $close = true){
+	function getTasks($text = false, $user_id = "", $close = true, $table = 'tasks', $answ = 'qer'){
 		$user_id = $user_id ? $user_id : $_SESSION['user']['id'];
 		$tasks = array();
-		$query = "SELECT `tasks`.id, `tasks`.task, `tasks`.db, `qer`.qer, `db`.info as 'dbinfo' FROM ((tasks INNER JOIN qer ON `tasks`.id = `qer`.id) INNER JOIN db ON `db`.id = `tasks`.db) ORDER BY id;";
+		$query = "SELECT `" . $table . "`.id, `" . $table . "`.task, `" . $table . "`.db, `" . $answ . "`.qer, `db`.info as 'dbinfo' FROM ((" . $table . " INNER JOIN " . $answ . " ON `" . $table . "`.id = `" . $answ . "`.id) INNER JOIN db ON `db`.id = `" . $table . "`.db) ORDER BY id;";
 		$answers =  $this->user->getUserAnswers();
 
 		if ($stmt = $this->db->dbcon_rw->prepare($query)) {

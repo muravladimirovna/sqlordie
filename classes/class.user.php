@@ -206,14 +206,14 @@ class User {
 					
 	}
 
-	function getUserAnswers($user_id = false) {
+	function getUserAnswers($user_id = false, $column = "answers") {
 		if(empty($user_id) && empty($_SESSION['user'])) return false;
 
-		$user_id = $user_id ? $user_id : $_SESSION['user']['id'];	
+		$user_id = $user_id ? $user_id : $_SESSION["user"]["id"];	
 
-		$answers =  $this->db->dbcon_rw->query("SELECT answers FROM `users` WHERE id = " . $user_id . "; ");
+		$answers =  $this->db->dbcon_rw->query("SELECT " . $column . " FROM `users` WHERE id = " . $user_id . "; ");
 		$user_answers = $answers ? $answers->fetch_array(MYSQLI_ASSOC) : false;
-		$user_answers = $user_answers ? unserialize($user_answers["answers"]) : false;
+		$user_answers = $user_answers ? unserialize($user_answers[$column]) : false;
 		return $user_answers;
 	}
 
@@ -236,7 +236,7 @@ class User {
 				} else echo '<div class="alert alert-danger">Не удалось отправить письмо</div>';
 				
 		    } else {
-		        echo '<div class="alert alert-danger">Извините но похоже вы робот ¯\(0_0)/¯</div>';
+		        echo '<div class="alert alert-danger">Извините, но похоже вы робот ¯\(0_0)/¯</div>';
 		    }
 		} else {
 		    echo '<div class="alert alert-danger">Вы не прошли валидацию reCaptcha</div>';
