@@ -12,11 +12,13 @@ $(document).ready(function() {
 			console.log(error)
 		});
 	});
+	
+	var data;
 	db.transaction(function(tx) {
-		tx.executeSql("SELEXT * FROM `pc`;", [], function(result){
-			console.log(result);
+		tx.executeSql("SELECT * FROM pc", [], function(tx, result){
+			data = result.rows;
 		}, function(tx, error){
-			console.log(error);
+			data = error;
 		});
 	});
 });
